@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "220991555166",
+    "firebase_url": "https://snooper-19e3e.firebaseio.com",
+    "project_id": "snooper-19e3e",
+    "storage_bucket": "snooper-19e3e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:220991555166:android:458287e5da452c7365d6cf",
+        "android_client_info": {
+          "package_name": "com.github.vasniktel.snooper"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "220991555166-c6gg3hr2r4pm79gak2cf7rn3n3i5u9t1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.github.vasniktel.snooper",
+            "certificate_hash": "4f19807921ce70d88c8b5911785c0cec75f9f78c"
+          }
+        },
+        {
+          "client_id": "220991555166-fqoufnmf9ed9v00kpgp05dlt7jethebd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDHCWO2o3tmuZVv6VGtXFj60lZtSotTL3Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "220991555166-fqoufnmf9ed9v00kpgp05dlt7jethebd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
