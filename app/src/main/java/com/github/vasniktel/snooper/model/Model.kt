@@ -3,7 +3,7 @@ package com.github.vasniktel.snooper.model
 import java.util.*
 
 sealed class User {
-    data class LoggedInUser(
+    data class LoggedIn(
         val id: String,
         val email: String,
         val firstName: String,
@@ -11,7 +11,9 @@ sealed class User {
         val iconUrl: String?
     ) : User()
 
-    object AnonymousUser : User()
+    object Anonymous : User()
+
+    val isAnonymous get() = this is Anonymous
 }
 
 data class UserFollowees(
