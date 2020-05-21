@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Snooper</string>
+    <string name="feed_page_title">Feed</string>
+    <string name="my_profile_page_title">My profile</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="login_button_text">log in</string>
+    <string name="loginRequest">You must login to use this app</string>
+    <string name="noDataMessage">No data available</string>
+    <string name="noUserMessage">No users</string>
 </resources>
