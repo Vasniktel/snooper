@@ -4,7 +4,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
@@ -42,6 +45,10 @@ class MainActivity : AppCompatActivity() {
         } else {
             Log.d(TAG, "Already logged in")
             showMainAppLayout()
+        }
+
+        onBackPressedDispatcher.addCallback(this) {
+            findNavController(R.id.navHostFragment).popBackStack()
         }
     }
 
@@ -102,5 +109,9 @@ class MainActivity : AppCompatActivity() {
             setGraph(R.navigation.nav_graph)
             NavigationUI.setupWithNavController(bottomNavigation, this)
         }
+    }
+
+    fun navigateTo(destination: Int, args: Bundle? = null) {
+        findNavController(R.id.navHostFragment).navigate(destination, args)
     }
 }

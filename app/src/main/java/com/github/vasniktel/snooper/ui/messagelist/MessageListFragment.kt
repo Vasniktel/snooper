@@ -12,6 +12,8 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.github.vasniktel.snooper.R
 import com.github.vasniktel.snooper.logic.model.Message
+import com.github.vasniktel.snooper.ui.activity.MainActivity
+import com.github.vasniktel.snooper.ui.user.UserFragment
 import com.github.vasniktel.snooper.util.changeVisibility
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_message_list.*
@@ -39,6 +41,8 @@ class MessageListFragment : Fragment(), MessageListViewStateCallback, ListItemCa
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        Log.d(TAG, "onActvityCreated: ${::adapter.isInitialized}")
+
         adapter = MessageListAdapter(this)
         messageList.adapter = adapter
 
@@ -82,8 +86,9 @@ class MessageListFragment : Fragment(), MessageListViewStateCallback, ListItemCa
     }
 
     override fun onUserClicked(position: Int, message: Message) {
-        findNavController().navigate(
-            MessageListFragmentDirections.actionMessageListFragmentToUserFragment(message.ownerId)
+        (requireActivity() as MainActivity).navigateTo(
+            R.id.userFragment,
+            UserFragment.makeArgs(message.ownerId)
         )
     }
 

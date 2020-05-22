@@ -15,6 +15,12 @@
             app:destination="@id/myProfileFragment"
             app:enterAnim="@anim/fragment_fade_enter"
             app:exitAnim="@anim/fragment_fade_exit" />
+        <action
+            android:id="@+id/action_feedFragment_to_userFragment"
+            app:destination="@id/userFragment"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:exitAnim="@anim/fragment_fade_exit"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
@@ -22,6 +28,12 @@
         android:name="com.github.vasniktel.snooper.ui.myprofile.MyProfileFragment"
         android:label="My Profile"
         tools:layout="@layout/fragment_my_profile">
+        <action
+            android:id="@+id/action_myProfileFragment_to_userFragment"
+            app:destination="@id/userFragment"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:exitAnim="@anim/fragment_fade_exit"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
@@ -35,30 +47,6 @@
             app:nullable="true"
             android:defaultValue="@null"
             />
-    </fragment>
-
-    <fragment
-        android:id="@+id/messageListFragment"
-        android:name="com.github.vasniktel.snooper.ui.messagelist.MessageListFragment"
-        android:label="Message list"
-        tools:layout="@layout/fragment_message_list">
-        <action
-            android:id="@+id/action_messageListFragment_to_userFragment"
-            app:destination="@id/userFragment"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/userListFragment"
-        android:name="com.github.vasniktel.snooper.ui.userlist.UserListFragment"
-        android:label="User List"
-        tools:layout="@layout/fragment_user_list">
-        <action
-            android:id="@+id/action_userListFragment_to_userFragment"
-            app:destination="@id/userFragment"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit" />
     </fragment>
 
 </navigation>

@@ -73,9 +73,10 @@ class UserFragment : Fragment(), UserViewStateCallback {
     }
 
     companion object {
-        fun create(userId: String? = null) =
-            UserFragment().apply {
-                arguments = UserFragmentArgs(userId).toBundle()
-            }
+        fun makeArgs(userId: String? = null) = UserFragmentArgs(userId).toBundle()
+
+        fun create(userId: String? = null) = UserFragment().apply {
+            arguments = makeArgs(userId)
+        }
     }
 }

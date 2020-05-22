@@ -8,9 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.github.vasniktel.snooper.R
 import com.github.vasniktel.snooper.logic.model.User
+import com.github.vasniktel.snooper.ui.activity.MainActivity
+import com.github.vasniktel.snooper.ui.user.UserFragment
 import com.github.vasniktel.snooper.util.changeVisibility
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_user_list.*
@@ -40,8 +43,9 @@ class UserListFragment : Fragment(), UserListViewStateCallback {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         adapter = UserListAdapter { user, _ ->
-            findNavController().navigate(
-                UserListFragmentDirections.actionUserListFragmentToUserFragment(user.id)
+            (requireActivity() as MainActivity).navigateTo(
+                R.id.userFragment,
+                UserFragment.makeArgs(user.id)
             )
         }
 
