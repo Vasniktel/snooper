@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
@@ -26,6 +27,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate")
         setContentView(R.layout.activity_main)
+
+        supportFragmentManager.findFragmentById(R.id.navHostFragment)?.let {
+            supportFragmentManager.beginTransaction()
+                .remove(it)
+                .commitNow()
+        }
 
         loginButton.setOnClickListener { login() }
 
@@ -84,7 +91,14 @@ class MainActivity : AppCompatActivity() {
         loginRequestLayout.visibility = View.GONE
         mainAppLayout.visibility = View.VISIBLE
 
-        findNavController(R.id.navHostFragment).apply {
+        supportFragmentManager.beginTransaction()
+            .add(R.id.navHostFragment, NavHostFragment.create(R.navigation.nav_graph))
+            .commitNow()
+
+        val host = supportFragmentManager
+            .findFragmentById(R.id.navHostFragment) as NavHostFragment
+
+        host.navController.apply {
             setGraph(R.navigation.nav_graph)
             NavigationUI.setupWithNavController(bottomNavigation, this)
         }

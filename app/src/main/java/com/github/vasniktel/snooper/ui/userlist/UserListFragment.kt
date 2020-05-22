@@ -47,6 +47,10 @@ class UserListFragment : Fragment(), UserListViewStateCallback {
 
         userList.adapter = adapter
 
+        refreshLayout.setOnRefreshListener {
+            viewModel.loadData(strategy)
+        }
+
         viewModel.viewState.observe(viewLifecycleOwner, Observer {
             Log.d(TAG, "Received state: $it")
             it.applyCallback(this)

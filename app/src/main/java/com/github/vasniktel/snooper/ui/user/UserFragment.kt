@@ -49,7 +49,7 @@ class UserFragment : Fragment(), UserViewStateCallback {
 
         logoutButton.setOnClickListener {
             Firebase.auth.signOut()
-            activity?.recreate()
+            requireActivity().recreate()
         }
 
         val isCurrentUser = args.userId == null
