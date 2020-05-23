@@ -8,13 +8,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
-import androidx.lifecycle.Observer
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import com.github.vasniktel.snooper.R
 import com.github.vasniktel.snooper.logic.model.Message
-import com.github.vasniktel.snooper.ui.feed.FeedFragmentDirections
-import com.github.vasniktel.snooper.ui.user.UserFragment
 import com.github.vasniktel.snooper.util.changeVisibility
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_message_list.*
@@ -23,6 +20,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 private val TAG = MessageListFragment::class.simpleName
 
 class MessageListFragment : Fragment(), MessageListViewStateCallback, ListItemCallback {
+    private lateinit var navigator: MessageListNavigator
     private lateinit var strategy: MessageRequestStrategy
     private val viewModel: MessageListViewModel by viewModel()
     private lateinit var adapter: MessageListAdapter
@@ -32,6 +30,7 @@ class MessageListFragment : Fragment(), MessageListViewStateCallback, ListItemCa
         super.onCreate(savedInstanceState)
         requireArguments().let {
             strategy = it[STRATEGY_KEY] as MessageRequestStrategy
+            navigator = it[NAVIGATOR_KEY] as MessageListNavigator
         }
     }
 
@@ -47,7 +46,12 @@ class MessageListFragment : Fragment(), MessageListViewStateCallback, ListItemCa
         Log.d(TAG, "onActvityCreated: ${::adapter.isInitialized}")
 
         adapter = MessageListAdapter(this)
-        messageList.adapter = adapter
+        messageList.apply {
+            adapter = this@MessageListFragment.adapter
+            setRecyclerListener { holder ->
+                (holder as MessageViewHolder).clear()
+            }
+        }
 
         refreshLayout.setOnRefreshListener {
             viewModel.fetchNewData(strategy)
@@ -91,10 +95,7 @@ class MessageListFragment : Fragment(), MessageListViewStateCallback, ListItemCa
     }
 
     override fun onUserClicked(position: Int, message: Message) {
-        findNavController().navigate(
-            R.id.userFragment,
-            UserFragment.makeArgs(message.ownerId)
-        )
+        findNavController().navigate(navigator.toUserDirection(message.ownerId))
     }
 
     override fun onMessageMenuButtonClicked(position: Int, message: Message) {
@@ -126,18 +127,17 @@ class MessageListFragment : Fragment(), MessageListViewStateCallback, ListItemCa
         )
     }
 
-    override fun onMapClicked(position: Int, message: Message) {
-        TODO("Not yet implemented")
-    }
-
     companion object {
         private const val STRATEGY_KEY = "messageRequestStrategy"
+        private const val NAVIGATOR_KEY = "messageListNavigator"
 
         fun create(
-            strategy: MessageRequestStrategy
+            strategy: MessageRequestStrategy,
+            navigator: MessageListNavigator
         ) = MessageListFragment().apply {
             arguments = bundleOf(
-                STRATEGY_KEY to strategy
+                STRATEGY_KEY to strategy,
+                NAVIGATOR_KEY to navigator
             )
         }
     }

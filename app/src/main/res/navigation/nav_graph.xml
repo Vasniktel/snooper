@@ -15,7 +15,7 @@
             app:destination="@id/userFragment"
             app:enterAnim="@anim/fragment_fade_enter"
             app:exitAnim="@anim/fragment_fade_exit"
-            app:popUpToInclusive="true" />
+            app:launchSingleTop="true" />
     </fragment>
 
     <fragment

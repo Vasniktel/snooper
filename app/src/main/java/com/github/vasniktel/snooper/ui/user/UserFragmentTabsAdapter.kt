@@ -17,9 +17,18 @@ class UserFragmentTabsAdapter(
 
     override fun createFragment(position: Int): Fragment {
         return when (position) {
-            0 -> MessageListFragment.create(PostsRequestStrategy(userId))
-            1 -> UserListFragment.create(FollowersRequestStrategy(userId))
-            2 -> UserListFragment.create(FolloweesRequestStrategy(userId))
+            0 -> MessageListFragment.create(
+                PostsRequestStrategy(userId),
+                MessageListNavigatorImpl
+            )
+            1 -> UserListFragment.create(
+                FollowersRequestStrategy(userId),
+                UserListNavigatorImpl
+            )
+            2 -> UserListFragment.create(
+                FolloweesRequestStrategy(userId),
+                UserListNavigatorImpl
+            )
             else -> throw SnooperException("Shouldn't have reached here")
         }
     }

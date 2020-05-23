@@ -2,6 +2,7 @@ package com.github.vasniktel.snooper.logic.model
 
 import android.os.Parcelable
 import com.github.vasniktel.snooper.util.SnooperException
+import com.google.android.libraries.maps.model.LatLng
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.android.parcel.Parcelize
 import java.util.*
@@ -45,3 +46,5 @@ data class Message(
         require(likes >= 0)
     }
 }
+
+val Message.latLng get() = LatLng(latitude, longitude)

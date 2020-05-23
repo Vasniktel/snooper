@@ -24,6 +24,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 private val TAG = UserListFragment::class.simpleName
 
 class UserListFragment : Fragment(), UserListViewStateCallback {
+    private lateinit var navigator: UserListNavigator
     private lateinit var strategy: UserListRequestStrategy
     private lateinit var adapter: UserListAdapter
     private var snackBar: Snackbar? = null
@@ -33,6 +34,7 @@ class UserListFragment : Fragment(), UserListViewStateCallback {
         super.onCreate(savedInstanceState)
         requireArguments().let {
             strategy = it[STRATEGY_KEY] as UserListRequestStrategy
+            navigator = it[NAVIGATOR_KEY] as UserListNavigator
         }
     }
 
@@ -46,10 +48,7 @@ class UserListFragment : Fragment(), UserListViewStateCallback {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         adapter = UserListAdapter { user, _ ->
-            findNavController().navigate(
-                R.id.userFragment,
-                UserFragment.makeArgs(user.id)
-            )
+            findNavController().navigate(navigator.toUserDirection(user.id))
         }
 
         userList.adapter = adapter
@@ -87,12 +86,15 @@ class UserListFragment : Fragment(), UserListViewStateCallback {
 
     companion object {
         private const val STRATEGY_KEY = "userListRequestStrategy"
+        private const val NAVIGATOR_KEY = "userListNavigator"
 
         fun create(
-            strategy: UserListRequestStrategy
+            strategy: UserListRequestStrategy,
+            navigator: UserListNavigator
         ) = UserListFragment().apply {
             arguments = bundleOf(
-                STRATEGY_KEY to strategy
+                STRATEGY_KEY to strategy,
+                NAVIGATOR_KEY to navigator
             )
         }
     }
