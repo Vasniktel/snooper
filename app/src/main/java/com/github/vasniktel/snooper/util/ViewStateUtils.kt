@@ -1,5 +1,6 @@
 package com.github.vasniktel.snooper.util
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -14,7 +15,9 @@ suspend fun <T> MutableLiveData<T>.produceDeferredValue(
         value = state
         delay(time)
         if (value == state) {
+            Log.d("produceDeferredValue", "if")
             value = then()
         }
+        Log.d("produceDeferredValue", "$value")
     }
 }

@@ -6,8 +6,8 @@ import com.github.vasniktel.snooper.logic.message.remote.RemoteMessageDataSource
 import com.github.vasniktel.snooper.logic.user.UserRepository
 import com.github.vasniktel.snooper.logic.user.UserRepositoryImpl
 import com.github.vasniktel.snooper.logic.user.remote.RemoteUserDataSource
-import com.github.vasniktel.snooper.ui.activity.MainActivityViewModel
 import com.github.vasniktel.snooper.ui.feed.FeedFragmentViewModel
+import com.github.vasniktel.snooper.ui.login.LoginViewModel
 import com.github.vasniktel.snooper.ui.messagelist.MessageListViewModel
 import com.github.vasniktel.snooper.ui.messagelist.MessageListViewModelImpl
 import com.github.vasniktel.snooper.ui.user.UserFragmentViewModel
@@ -49,8 +49,8 @@ val productionModule = module {
     }
     single<MessageRepository> { MessageRepositoryImpl(get()) }
     viewModel { FeedFragmentViewModel(get()) }
-    viewModel { MainActivityViewModel(get()) }
-    viewModel<MessageListViewModel> { MessageListViewModelImpl(get(), get()) }
+    viewModel { LoginViewModel(get()) }
+    viewModel<MessageListViewModel> { MessageListViewModelImpl(get()) }
     viewModel { UserListViewModel(get()) }
     viewModel { UserFragmentViewModel(get()) }
 }

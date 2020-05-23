@@ -9,6 +9,7 @@ interface MessageListViewStateCallback {
     fun onNextPageLoaded(page: List<Message>)
     fun onNewDataLoaded(data: List<Message>)
     fun onError(message: String, throwable: Throwable?)
+    fun onPopulateState()
 }
 
 typealias MessageListViewState = ViewState<MessageListViewStateCallback>
@@ -51,5 +52,11 @@ data class ErrorState(
 ) : MessageListViewState {
     override fun applyCallback(callback: MessageListViewStateCallback) {
         callback.onError(message, throwable)
+    }
+}
+
+object PopulateState : MessageListViewState {
+    override fun applyCallback(callback: MessageListViewStateCallback) {
+        callback.onPopulateState()
     }
 }

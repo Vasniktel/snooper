@@ -1,5 +1,6 @@
 package com.github.vasniktel.snooper.ui.messagelist
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,7 +10,7 @@ import com.github.vasniktel.snooper.logic.model.Message
 import com.github.vasniktel.snooper.logic.user.UserRepository
 import com.github.vasniktel.snooper.util.ERROR_DELAY_TIME
 import com.github.vasniktel.snooper.util.compositeState
-import com.github.vasniktel.snooper.util.loadData
+import com.github.vasniktel.snooper.util.doWork
 import com.github.vasniktel.snooper.util.produceDeferredValue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -22,10 +23,9 @@ abstract class MessageListViewModel : ViewModel() {
 }
 
 class MessageListViewModelImpl(
-    private val userRepository: UserRepository,
     private val messageRepository: MessageRepository
 ) : MessageListViewModel() {
-    private val _viewState = MutableLiveData<MessageListViewState>()
+    private val _viewState = MutableLiveData<MessageListViewState>(PopulateState)
     override val viewState: LiveData<MessageListViewState> = _viewState
 
     override fun fetchNewData(strategy: MessageRequestStrategy) {
@@ -47,12 +47,12 @@ class MessageListViewModelImpl(
     }
 
     private fun loadData(loader: suspend () -> List<Message>) {
-        viewModelScope.loadData(
+        viewModelScope.doWork(
             mainContext = Dispatchers.Main,
             workContext = Dispatchers.IO,
-            preLoad = { _viewState.value = LoadingTopActive(true) },
-            loader = loader,
-            postLoad = {
+            pre = { _viewState.value = LoadingTopActive(true) },
+            worker = loader,
+            post = {
                 _viewState.value = compositeState(
                     LoadingTopActive(false),
                     LoadedFresh(it)

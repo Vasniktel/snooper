@@ -8,6 +8,7 @@ interface UserListViewStateCallback {
     fun onLoadingVisibilityChange(visible: Boolean)
     fun onDataLoaded(data: List<User>)
     fun onError(message: String, throwable: Throwable?)
+    fun onPopulateState()
 }
 
 typealias UserListViewState = ViewState<UserListViewStateCallback>
@@ -34,5 +35,11 @@ data class ErrorState(
 ): UserListViewState {
     override fun applyCallback(callback: UserListViewStateCallback) {
         callback.onError(message, throwable)
+    }
+}
+
+object PopulateState : UserListViewState {
+    override fun applyCallback(callback: UserListViewStateCallback) {
+        callback.onPopulateState()
     }
 }
