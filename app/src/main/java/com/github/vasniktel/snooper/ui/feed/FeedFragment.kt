@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.github.vasniktel.snooper.R
@@ -22,17 +23,20 @@ class FeedFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_feed, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        childFragmentManager.beginTransaction()
-            .replace(
-                R.id.messageListFragment,
-                MessageListFragment.create(
-                    FeedRequestStrategy(
-                        viewModel.currentUser.id
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        childFragmentManager.apply {
+            if (findFragmentById(R.id.messageListFragment) == null) {
+                beginTransaction()
+                    .add(
+                        R.id.messageListFragment,
+                        MessageListFragment.create(
+                            FeedRequestStrategy(viewModel.currentUser.id)
+                        )
                     )
-                )
-            )
-            .commit()
+                    .commit()
+            }
+        }
     }
 }

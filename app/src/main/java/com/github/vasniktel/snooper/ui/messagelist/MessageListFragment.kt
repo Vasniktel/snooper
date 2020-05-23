@@ -9,10 +9,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
+import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import com.github.vasniktel.snooper.R
 import com.github.vasniktel.snooper.logic.model.Message
-import com.github.vasniktel.snooper.ui.activity.MainActivity
+import com.github.vasniktel.snooper.ui.feed.FeedFragmentDirections
 import com.github.vasniktel.snooper.ui.user.UserFragment
 import com.github.vasniktel.snooper.util.changeVisibility
 import com.google.android.material.snackbar.Snackbar
@@ -29,7 +30,9 @@ class MessageListFragment : Fragment(), MessageListViewStateCallback, ListItemCa
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        strategy = requireArguments()[STRATEGY_KEY] as MessageRequestStrategy
+        requireArguments().let {
+            strategy = it[STRATEGY_KEY] as MessageRequestStrategy
+        }
     }
 
     override fun onCreateView(
@@ -50,12 +53,10 @@ class MessageListFragment : Fragment(), MessageListViewStateCallback, ListItemCa
             viewModel.fetchNewData(strategy)
         }
 
-        viewModel.viewState.observe(viewLifecycleOwner, Observer {
+        viewModel.viewState.observe(viewLifecycleOwner) {
             Log.d(TAG, "Received action: $it")
             it.applyCallback(this)
-        })
-
-        viewModel.getData(strategy)
+        }
     }
 
     override fun onLoadingTopVisibilityChange(visible: Boolean) {
@@ -85,8 +86,12 @@ class MessageListFragment : Fragment(), MessageListViewStateCallback, ListItemCa
         snackBar?.show()
     }
 
+    override fun onPopulateState() {
+        viewModel.getData(strategy)
+    }
+
     override fun onUserClicked(position: Int, message: Message) {
-        (requireActivity() as MainActivity).navigateTo(
+        findNavController().navigate(
             R.id.userFragment,
             UserFragment.makeArgs(message.ownerId)
         )
@@ -128,11 +133,12 @@ class MessageListFragment : Fragment(), MessageListViewStateCallback, ListItemCa
     companion object {
         private const val STRATEGY_KEY = "messageRequestStrategy"
 
-        fun create(strategy: MessageRequestStrategy) =
-            MessageListFragment().apply {
-                arguments = bundleOf(
-                    STRATEGY_KEY to strategy
-                )
-            }
+        fun create(
+            strategy: MessageRequestStrategy
+        ) = MessageListFragment().apply {
+            arguments = bundleOf(
+                STRATEGY_KEY to strategy
+            )
+        }
     }
 }

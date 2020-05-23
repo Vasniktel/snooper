@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
+import androidx.lifecycle.observe
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.github.vasniktel.snooper.R
@@ -30,7 +31,9 @@ class UserListFragment : Fragment(), UserListViewStateCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        strategy = requireArguments()[STRATEGY_KEY] as UserListRequestStrategy
+        requireArguments().let {
+            strategy = it[STRATEGY_KEY] as UserListRequestStrategy
+        }
     }
 
     override fun onCreateView(
@@ -43,7 +46,7 @@ class UserListFragment : Fragment(), UserListViewStateCallback {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         adapter = UserListAdapter { user, _ ->
-            (requireActivity() as MainActivity).navigateTo(
+            findNavController().navigate(
                 R.id.userFragment,
                 UserFragment.makeArgs(user.id)
             )
@@ -55,12 +58,10 @@ class UserListFragment : Fragment(), UserListViewStateCallback {
             viewModel.loadData(strategy)
         }
 
-        viewModel.viewState.observe(viewLifecycleOwner, Observer {
+        viewModel.viewState.observe(viewLifecycleOwner) {
             Log.d(TAG, "Received state: $it")
             it.applyCallback(this)
-        })
-
-        viewModel.loadData(strategy)
+        }
     }
 
     override fun onLoadingVisibilityChange(visible: Boolean) {
@@ -80,14 +81,19 @@ class UserListFragment : Fragment(), UserListViewStateCallback {
         snackBar?.show()
     }
 
+    override fun onPopulateState() {
+        viewModel.loadData(strategy)
+    }
+
     companion object {
         private const val STRATEGY_KEY = "userListRequestStrategy"
 
-        fun create(strategy: UserListRequestStrategy) =
-            UserListFragment().apply {
-                arguments = bundleOf(
-                    STRATEGY_KEY to strategy
-                )
-            }
+        fun create(
+            strategy: UserListRequestStrategy
+        ) = UserListFragment().apply {
+            arguments = bundleOf(
+                STRATEGY_KEY to strategy
+            )
+        }
     }
 }

@@ -7,23 +7,23 @@ import androidx.lifecycle.viewModelScope
 import com.github.vasniktel.snooper.logic.user.UserRepository
 import com.github.vasniktel.snooper.util.ERROR_DELAY_TIME
 import com.github.vasniktel.snooper.util.compositeState
-import com.github.vasniktel.snooper.util.loadData
+import com.github.vasniktel.snooper.util.doWork
 import com.github.vasniktel.snooper.util.produceDeferredValue
 import kotlinx.coroutines.Dispatchers
 
 class UserListViewModel(
     private val userRepository: UserRepository
 ) : ViewModel() {
-    private val _viewState = MutableLiveData<UserListViewState>()
+    private val _viewState = MutableLiveData<UserListViewState>(PopulateState)
     val viewState: LiveData<UserListViewState> = _viewState
 
     fun loadData(strategy: UserListRequestStrategy) {
-        viewModelScope.loadData(
+        viewModelScope.doWork(
             mainContext = Dispatchers.Main,
             workContext = Dispatchers.IO,
-            loader = { strategy.requestUsers(userRepository) },
-            preLoad = { _viewState.value = Loading(true) },
-            postLoad = {
+            worker = { strategy.requestUsers(userRepository) },
+            pre = { _viewState.value = Loading(true) },
+            post = {
                 _viewState.value = compositeState(
                     Loading(false),
                     DataLoaded(it)

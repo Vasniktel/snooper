@@ -4,12 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.github.vasniktel.snooper.logic.message.MessageRepository
 import com.github.vasniktel.snooper.logic.user.UserRepository
-import com.github.vasniktel.snooper.util.loadData
+import com.github.vasniktel.snooper.util.doWork
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import java.lang.Exception
 
 class UserFragmentViewModel(
     private val userRepository: UserRepository
@@ -25,12 +24,14 @@ class UserFragmentViewModel(
             return
         }
 
-        viewModelScope.loadData(
+        viewModelScope.doWork(
             mainContext = Dispatchers.Main,
             workContext = Dispatchers.IO,
-            loader = { userRepository.getUserById(id) },
-            postLoad = { _viewState.value = LoadedUser(it) },
+            worker = { userRepository.getUserById(id) },
+            post = { _viewState.value = LoadedUser(it) },
             onError = { _viewState.value = ErrorState("Unable to load user data", it) }
         )
     }
+
+    fun logOut() = Firebase.auth.signOut()
 }

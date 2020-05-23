@@ -6,7 +6,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
+import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.github.vasniktel.snooper.R
@@ -48,17 +50,19 @@ class UserFragment : Fragment(), UserViewStateCallback {
         }
 
         logoutButton.setOnClickListener {
-            Firebase.auth.signOut()
-            requireActivity().recreate()
+            viewModel.logOut()
+            findNavController().navigate(
+                UserFragmentDirections.actionUserFragmentToLoginFragment()
+            )
         }
 
         val isCurrentUser = args.userId == null
         changeVisibility(backButton, !isCurrentUser)
         changeVisibility(logoutButton, isCurrentUser)
 
-        viewModel.viewState.observe(viewLifecycleOwner, Observer {
+        viewModel.viewState.observe(viewLifecycleOwner) {
             it.applyCallback(this)
-        })
+        }
 
         viewModel.loadUserById(userId)
     }
@@ -73,7 +77,9 @@ class UserFragment : Fragment(), UserViewStateCallback {
     }
 
     companion object {
-        fun makeArgs(userId: String? = null) = UserFragmentArgs(userId).toBundle()
+        private const val USER_ID_KEY = "userIdKey"
+
+        fun makeArgs(userId: String? = null) = bundleOf(USER_ID_KEY to userId)
 
         fun create(userId: String? = null) = UserFragment().apply {
             arguments = makeArgs(userId)
