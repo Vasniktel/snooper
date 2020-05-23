@@ -9,7 +9,7 @@ data class RemoteMessageDto(
     val id: Int,
     val latitude: Double,
     val longitude: Double,
-    val address: String? = null,
+    val address: String,
     val description: String? = null,
     val likes: Int,
     val date: Date? = null,

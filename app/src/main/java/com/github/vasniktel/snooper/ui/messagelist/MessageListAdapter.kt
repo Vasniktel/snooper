@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.vasniktel.snooper.R
 import com.github.vasniktel.snooper.logic.model.Message
 import com.github.vasniktel.snooper.logic.model.latLng
+import com.github.vasniktel.snooper.util.changeVisibility
 import com.google.android.libraries.maps.CameraUpdateFactory
 import com.google.android.libraries.maps.GoogleMap
 import com.google.android.libraries.maps.OnMapReadyCallback
@@ -74,6 +75,7 @@ class MessageViewHolder(
     ): Unit = with(view) {
         userName.text = data.ownerName
         messageDate.text = DATE_FORMATTER.format(data.date)
+        messageAddress.text = data.address
 
         likeCount.text = data.likes.toString()
         if (data.likes > 0) {
@@ -90,6 +92,13 @@ class MessageViewHolder(
         } else {
             messageMenuButton!!.visibility = View.GONE
         }*/
+
+        if (data.description != null) {
+            changeVisibility(messageDescription, true)
+            messageDescription.text = data.description
+        } else {
+            changeVisibility(messageDescription, false)
+        }
 
         userPhoto.setOnClickListener { callback.onUserClicked(position, data) }
         userName.setOnClickListener { callback.onUserClicked(position, data) }

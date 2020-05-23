@@ -31,7 +31,7 @@ public class MessageDto {
   private double longitude;
 
   @Column(name = "address")
-  @Nullable
+  @NonNull
   @JsonProperty
   private String address;
 

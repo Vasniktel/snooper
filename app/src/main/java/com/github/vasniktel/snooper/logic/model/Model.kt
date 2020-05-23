@@ -38,7 +38,7 @@ data class Message(
     val ownerId: String,
     val ownerName: String,
     val likes: Int,
-    val address: String?,
+    val address: String,
     val description: String?,
     val date: Date
 ) {
