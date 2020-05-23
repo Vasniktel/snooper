@@ -9,7 +9,7 @@ public interface MessageRepository extends CrudRepository<MessageDto, Integer> {
   List<MessageDto> findAllByOwnerIdOrderByDateDesc(String ownerId);
 
   @Query(
-      "from MessageDto where ownerId = :id or ownerId in (" +
+      "from MessageDto where owner.id = :id or owner.id in (" +
           "select s.followeeId from SubscriptionDto s " +
           "where s.followerId = :id) " +
           "order by date desc"

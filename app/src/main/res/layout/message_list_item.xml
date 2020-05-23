@@ -26,8 +26,8 @@
             <ImageView
                 android:id="@+id/userPhoto"
                 android:contentDescription="User photo"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="@dimen/message_list_item_photo"
+                android:layout_height="@dimen/message_list_item_photo"
                 android:clickable="true"
                 android:focusable="true"
                 app:layout_constraintTop_toTopOf="parent"

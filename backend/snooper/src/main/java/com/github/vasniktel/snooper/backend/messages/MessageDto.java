@@ -40,14 +40,10 @@ public class MessageDto {
   @JsonProperty
   private String description;
 
-  @Column(name = "owner_id")
+  @ManyToOne
   @NonNull
   @JsonProperty
-  private String ownerId;
-
-  @Formula("(select u.name from users u where u.id = owner_id)")
-  @JsonProperty
-  private String ownerName;
+  private UserDto owner;
 
   @Column(name = "date")
   @JsonProperty
@@ -108,28 +104,20 @@ public class MessageDto {
     this.date = date;
   }
 
-  @NonNull
-  public String getOwnerId() {
-    return ownerId;
-  }
-
-  public void setOwnerId(@NonNull String ownerId) {
-    this.ownerId = ownerId;
-  }
-
-  public String getOwnerName() {
-    return ownerName;
-  }
-
-  public void setOwnerName(String ownerName) {
-    this.ownerName = ownerName;
-  }
-
   public int getLikes() {
     return likes;
   }
 
   public void setLikes(int likes) {
     this.likes = likes;
+  }
+
+  @NonNull
+  public UserDto getOwner() {
+    return owner;
+  }
+
+  public void setOwner(@NonNull UserDto owner) {
+    this.owner = owner;
   }
 }

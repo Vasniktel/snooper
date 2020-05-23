@@ -38,6 +38,8 @@ android {
 }
 
 dependencies {
+    implementation 'jp.wasabeef:picasso-transformations:2.2.1'
+    implementation 'com.squareup.picasso:picasso:2.71828'
     implementation name:'maps-sdk-3.0.0-beta', ext:'aar'
     implementation 'androidx.annotation:annotation:1.1.0'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0'

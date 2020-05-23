@@ -1,6 +1,9 @@
 package com.github.vasniktel.snooper.logic.message.remote
 
 import com.github.vasniktel.snooper.logic.model.Message
+import com.github.vasniktel.snooper.logic.user.remote.RemoteUserDto
+import com.github.vasniktel.snooper.logic.user.remote.toModel
+import com.github.vasniktel.snooper.logic.user.remote.toRemoteDto
 import com.squareup.moshi.JsonClass
 import java.util.*
 
@@ -13,8 +16,7 @@ data class RemoteMessageDto(
     val description: String? = null,
     val likes: Int,
     val date: Date? = null,
-    val ownerId: String,
-    val ownerName: String? = null
+    val owner: RemoteUserDto
 )
 
 fun Message.toRemoteDto() =
@@ -25,7 +27,7 @@ fun Message.toRemoteDto() =
         address = address,
         description = description,
         likes = likes,
-        ownerId = ownerId
+        owner = owner.toRemoteDto()
     )
 
 fun RemoteMessageDto.toModel() = Message(
@@ -36,6 +38,5 @@ fun RemoteMessageDto.toModel() = Message(
     description = description,
     likes = likes,
     date = date!!,
-    ownerId = ownerId,
-    ownerName = ownerName!!
+    owner = owner.toModel()
 )

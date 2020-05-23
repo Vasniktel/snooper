@@ -40,8 +40,8 @@
                 <ImageView
                     android:id="@+id/userPhoto"
                     android:contentDescription="User photo"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="@dimen/user_fragment_photo"
+                    android:layout_height="@dimen/user_fragment_photo"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toEndOf="@id/backButton"
                     app:layout_constraintBottom_toBottomOf="parent"

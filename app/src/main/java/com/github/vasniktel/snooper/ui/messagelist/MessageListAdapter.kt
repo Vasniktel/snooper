@@ -16,7 +16,11 @@ import com.google.android.libraries.maps.CameraUpdateFactory
 import com.google.android.libraries.maps.GoogleMap
 import com.google.android.libraries.maps.OnMapReadyCallback
 import com.google.android.libraries.maps.model.MarkerOptions
+import com.squareup.picasso.Callback
+import com.squareup.picasso.Picasso
+import jp.wasabeef.picasso.transformations.CropCircleTransformation
 import kotlinx.android.synthetic.main.message_list_item.view.*
+import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -73,7 +77,15 @@ class MessageViewHolder(
         callback: ListItemCallback,
         position: Int
     ): Unit = with(view) {
-        userName.text = data.ownerName
+        Picasso.get()
+            // Picasso doesn't load vector drawables if url is null
+            .load(data.owner.photoUrl ?: "load error drawable")
+            .error(R.drawable.ic_baseline_person_24)
+            .resizeDimen(R.dimen.message_list_item_photo, R.dimen.message_list_item_photo)
+            .transform(CropCircleTransformation())
+            .into(userPhoto)
+
+        userName.text = data.owner.name
         messageDate.text = DATE_FORMATTER.format(data.date)
         messageAddress.text = data.address
 

@@ -95,7 +95,7 @@ class MessageListFragment : Fragment(), MessageListViewStateCallback, ListItemCa
     }
 
     override fun onUserClicked(position: Int, message: Message) {
-        findNavController().navigate(navigator.toUserDirection(message.ownerId))
+        findNavController().navigate(navigator.toUserDirection(message.owner))
     }
 
     override fun onMessageMenuButtonClicked(position: Int, message: Message) {
@@ -112,19 +112,16 @@ class MessageListFragment : Fragment(), MessageListViewStateCallback, ListItemCa
     }
 
     override fun onMessageShareButtonClicked(position: Int, message: Message) {
-        startActivity(
-            Intent.createChooser(
-                Intent().apply {
-                    action = Intent.ACTION_SEND
-                    putExtra(
-                        Intent.EXTRA_TEXT,
-                        "${message.ownerName} has visited ${message.latitude} ${message.longitude}"
-                    )
-                    type = "text/plain"
-                },
-                null
+        val intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(
+                Intent.EXTRA_TEXT,
+                "${message.owner.name} has visited ${message.latitude} ${message.longitude}"
             )
-        )
+            type = "text/plain"
+        }
+
+        startActivity(Intent.createChooser(intent, null))
     }
 
     companion object {

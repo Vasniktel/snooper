@@ -48,7 +48,7 @@ class UserListFragment : Fragment(), UserListViewStateCallback {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         adapter = UserListAdapter { user, _ ->
-            findNavController().navigate(navigator.toUserDirection(user.id))
+            findNavController().navigate(navigator.toUserDirection(user))
         }
 
         userList.adapter = adapter
