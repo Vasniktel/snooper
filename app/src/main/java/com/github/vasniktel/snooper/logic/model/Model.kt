@@ -31,19 +31,38 @@ fun FirebaseUser.toUser(): User {
     )
 }
 
-data class Message(
-    val id: Int,
+data class Location(
     val latitude: Double,
     val longitude: Double,
+    val address: String
+)
+
+data class Message(
+    val id: Int,
+    val location: Location,
     val owner: User,
     val likes: Int,
-    val address: String,
     val description: String?,
     val date: Date
 ) {
     init {
         require(likes >= 0)
     }
+
+    companion object {
+        fun newInstance(
+            owner: User,
+            location: Location,
+            description: String?
+        ) = Message(
+            id = 0,
+            owner = owner,
+            location = location,
+            description = description,
+            likes = 0,
+            date = Date()
+        )
+    }
 }
 
-val Message.latLng get() = LatLng(latitude, longitude)
+val Location.latLng get() = LatLng(latitude, longitude)

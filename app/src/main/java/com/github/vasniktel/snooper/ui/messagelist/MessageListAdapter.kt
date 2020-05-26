@@ -85,7 +85,7 @@ class MessageViewHolder(
 
         userName.text = data.owner.name
         messageDate.text = DATE_FORMATTER.format(data.date)
-        messageAddress.text = data.address
+        messageAddress.text = data.location.address
 
         likeCount.text = data.likes.toString()
         if (data.likes > 0) {
@@ -125,7 +125,7 @@ class MessageViewHolder(
     private fun setMapLocation() {
         if (!::map.isInitialized || !::message.isInitialized) return
         map.apply {
-            val position = message.latLng
+            val position = message.location.latLng
             moveCamera(CameraUpdateFactory.newLatLngZoom(position, 13f))
             addMarker(MarkerOptions().position(position))
             mapType = GoogleMap.MAP_TYPE_NORMAL

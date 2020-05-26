@@ -74,11 +74,6 @@ class MessageRepositoryImpl(
     }
 
     override suspend fun createMessage(message: Message) {
-        remoteMessageDataSource.createMessage(
-            message.toRemoteDto().copy(
-                id = 0,
-                likes = 0
-            )
-        )
+        remoteMessageDataSource.createMessage(message.toRemoteDto())
     }
 }

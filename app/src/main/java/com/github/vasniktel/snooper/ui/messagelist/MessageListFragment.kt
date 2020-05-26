@@ -116,7 +116,7 @@ class MessageListFragment : Fragment(), MessageListViewStateCallback, ListItemCa
             action = Intent.ACTION_SEND
             putExtra(
                 Intent.EXTRA_TEXT,
-                "${message.owner.name} has visited ${message.latitude} ${message.longitude}"
+                "${message.owner.name} has visited ${message.location.address}"
             )
             type = "text/plain"
         }

@@ -1,5 +1,7 @@
 package com.github.vasniktel.snooper.ui.user
 
+import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,7 +13,10 @@ import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.github.vasniktel.snooper.R
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
+import com.livinglifetechway.quickpermissions_kotlin.runWithPermissions
+import com.livinglifetechway.quickpermissions_kotlin.util.QuickPermissionsOptions
 import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
 import kotlinx.android.synthetic.main.fragment_user.*
@@ -31,6 +36,7 @@ class UserFragment : Fragment(), UserViewStateCallback {
         return inflater.inflate(R.layout.fragment_user, container, false)
     }
 
+    @SuppressLint("MissingPermission")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
@@ -50,6 +56,12 @@ class UserFragment : Fragment(), UserViewStateCallback {
             findNavController().navigate(
                 UserFragmentDirections.actionUserFragmentToLoginFragment()
             )
+        }
+
+        postMessageButton.setOnClickListener {
+            runWithPermissions(ACCESS_FINE_LOCATION) {
+                viewModel.postMessage()
+            }
         }
 
         backButton.isVisible = args.user != null
@@ -90,8 +102,13 @@ class UserFragment : Fragment(), UserViewStateCallback {
     override fun onPopulateState() {
         args.user?.let {
             if (it != viewModel.currentUser) {
-                viewModel.updateSubscriptionStatus(args.user!!)
+                viewModel.updateSubscriptionStatus(it)
             }
         }
+    }
+
+    override fun onError(message: String, throwable: Throwable?) {
+        Log.w(TAG, "Got error: $message", throwable)
+        Snackbar.make(requireView(), message, Snackbar.LENGTH_LONG).show()
     }
 }

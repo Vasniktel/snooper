@@ -1,5 +1,7 @@
 package com.github.vasniktel.snooper.di
 
+import com.github.vasniktel.snooper.logic.location.LocationProvider
+import com.github.vasniktel.snooper.logic.location.LocationProviderImpl
 import com.github.vasniktel.snooper.logic.message.MessageRepository
 import com.github.vasniktel.snooper.logic.message.MessageRepositoryImpl
 import com.github.vasniktel.snooper.logic.message.remote.RemoteMessageDataSource
@@ -20,6 +22,7 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.Rfc3339DateJsonAdapter
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import org.koin.android.ext.koin.androidApplication
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import retrofit2.Retrofit
@@ -54,11 +57,13 @@ val productionModule = module {
     single<RemoteSubscriptionDataSource> { get<Retrofit>().create() }
     single<SubscriptionRepository> { SubscriptionRepositoryImpl(get()) }
 
+    single<LocationProvider> { LocationProviderImpl(androidApplication(), Locale.US) }
+
     viewModel { FeedFragmentViewModel(get()) }
     viewModel { LoginViewModel(get()) }
     viewModel<MessageListViewModel> { MessageListViewModelImpl(get()) }
     viewModel { UserListViewModel(get()) }
-    viewModel { UserFragmentViewModel(get(), get()) }
+    viewModel { UserFragmentViewModel(get(), get(), get(), get()) }
 }
 
 val testModule = module {
