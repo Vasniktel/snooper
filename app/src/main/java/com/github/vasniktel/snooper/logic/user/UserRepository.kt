@@ -7,21 +7,24 @@ import com.github.vasniktel.snooper.logic.user.remote.RemoteUserDataSource
 import com.github.vasniktel.snooper.logic.user.remote.RemoteUserDto
 import com.github.vasniktel.snooper.logic.user.remote.toModel
 import com.github.vasniktel.snooper.logic.user.remote.toRemoteDto
-import com.github.vasniktel.snooper.util.SnooperException
-import com.google.firebase.auth.UserInfo
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlin.text.get
 import kotlin.time.ExperimentalTime
 import kotlin.time.minutes
 
 interface UserRepository {
     val currentUser: User?
-    suspend fun getFollowersOf(userId: String, fetch: Boolean = false): List<User>
-    suspend fun getFolloweesOf(userId: String, fetch: Boolean = false): List<User>
-    suspend fun follow(followerId: String, followeeId: String)
+    suspend fun getFollowersOf(
+        userId: String,
+        fetch: Boolean = false
+    ): List<User>
+    suspend fun getFolloweesOf(
+        userId: String,
+        fetch: Boolean = false
+    ): List<User>
+
     suspend fun create(user: User)
     suspend fun getUserById(id: String): User
 }
@@ -30,7 +33,7 @@ interface UserRepository {
 @FlowPreview
 @ExperimentalTime
 class UserRepositoryImpl(
-    private val remoteUserDataSource: RemoteUserDataSource
+    private val remote: RemoteUserDataSource
 ) : UserRepository {
     override val currentUser get() = Firebase.auth.currentUser?.toUser()
 
@@ -40,50 +43,51 @@ class UserRepositoryImpl(
         .setMemorySize(10)
         .build()
 
-    private val followersStore = StoreBuilder
-        .from(
-            nonFlowValueFetcher<String, List<User>> {
-                remoteUserDataSource
-                    .getFollowersOf(it)
-                    .map(RemoteUserDto::toModel)
-            }
-        )
+    private val followersStore = StoreBuilder.from(
+        nonFlowValueFetcher<String, List<User>> {
+            remote
+                .getFollowersOf(it)
+                .map(RemoteUserDto::toModel)
+        }
+    )
         .cachePolicy(commonMemoryPolicy)
         .build()
 
-    private val followeesStore = StoreBuilder
-        .from(
-            nonFlowValueFetcher<String, List<User>> {
-                remoteUserDataSource
-                    .getFolloweesOf(it)
-                    .map(RemoteUserDto::toModel)
-            }
-        )
+    private val followeesStore = StoreBuilder.from(
+        nonFlowValueFetcher<String, List<User>> {
+            remote
+                .getFolloweesOf(it)
+                .map(RemoteUserDto::toModel)
+        }
+    )
         .cachePolicy(commonMemoryPolicy)
         .build()
 
     override suspend fun getFollowersOf(userId: String, fetch: Boolean): List<User> {
         return with(followersStore) {
-            if (fetch) fresh(userId) else get(userId)
+            if (fetch) {
+                fresh(userId)
+            } else {
+                get(userId)
+            }
         }
     }
 
     override suspend fun getFolloweesOf(userId: String, fetch: Boolean): List<User> {
         return with(followeesStore) {
-            if (fetch) fresh(userId) else get(userId)
+            if (fetch) {
+                fresh(userId)
+            } else {
+                get(userId)
+            }
         }
     }
 
-    override suspend fun follow(followerId: String, followeeId: String) {
-        remoteUserDataSource.follow(followerId, followeeId)
-    }
-
     override suspend fun create(user: User) {
-        remoteUserDataSource.add(user.toRemoteDto())
+        remote.add(user.toRemoteDto())
     }
 
     override suspend fun getUserById(id: String): User {
-        return remoteUserDataSource.getUserById(id).toModel()
+        return remote.getUserById(id).toModel()
     }
-
 }

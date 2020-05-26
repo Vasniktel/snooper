@@ -24,8 +24,6 @@ class LoginViewModel(
     val viewState: LiveData<LoginViewState> = _viewState
 
     init {
-        Log.d(this::class.simpleName, "inited: ${_viewState.value}")
-
         _viewState.value = if (userRepository.currentUser == null) {
             NotAuthorized
         } else {

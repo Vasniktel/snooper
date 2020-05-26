@@ -2,10 +2,10 @@ package com.github.vasniktel.snooper.ui.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.github.vasniktel.snooper.R
-import com.github.vasniktel.snooper.util.changeVisibility
 import com.google.android.libraries.maps.MapsInitializer
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -19,10 +19,15 @@ class MainActivity : AppCompatActivity() {
         val host = supportFragmentManager
             .findFragmentById(R.id.navHostFragment) as NavHostFragment
 
-        bottomNavigation.setupWithNavController(host.navController)
-
         host.navController.addOnDestinationChangedListener { _, destination, _ ->
-            changeVisibility(bottomNavigation, destination.id != R.id.loginFragment)
+            bottomNavigation.isVisible = destination.id != R.id.loginFragment
+        }
+
+        with(bottomNavigation) {
+            setupWithNavController(host.navController)
+            setOnNavigationItemReselectedListener {
+                // ignore reselected menu item
+            }
         }
     }
 }

@@ -3,6 +3,9 @@ package com.github.vasniktel.snooper.di
 import com.github.vasniktel.snooper.logic.message.MessageRepository
 import com.github.vasniktel.snooper.logic.message.MessageRepositoryImpl
 import com.github.vasniktel.snooper.logic.message.remote.RemoteMessageDataSource
+import com.github.vasniktel.snooper.logic.subscription.RemoteSubscriptionDataSource
+import com.github.vasniktel.snooper.logic.subscription.SubscriptionRepository
+import com.github.vasniktel.snooper.logic.subscription.SubscriptionRepositoryImpl
 import com.github.vasniktel.snooper.logic.user.UserRepository
 import com.github.vasniktel.snooper.logic.user.UserRepositoryImpl
 import com.github.vasniktel.snooper.logic.user.remote.RemoteUserDataSource
@@ -21,6 +24,7 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import retrofit2.create
 import java.util.*
 import kotlin.time.ExperimentalTime
 
@@ -28,7 +32,6 @@ import kotlin.time.ExperimentalTime
 @ExperimentalCoroutinesApi
 @ExperimentalTime
 val productionModule = module {
-    single<UserRepository> { UserRepositoryImpl(get())}
     single<Retrofit> {
         Retrofit.Builder()
             .baseUrl(RETROFIT_IP)
@@ -41,18 +44,21 @@ val productionModule = module {
             )
             .build()
     }
-    single<RemoteUserDataSource> {
-        get<Retrofit>().create(RemoteUserDataSource::class.java)
-    }
-    single<RemoteMessageDataSource> {
-        get<Retrofit>().create(RemoteMessageDataSource::class.java)
-    }
+
+    single<RemoteUserDataSource> { get<Retrofit>().create() }
+    single<UserRepository> { UserRepositoryImpl(get())}
+
+    single<RemoteMessageDataSource> { get<Retrofit>().create() }
     single<MessageRepository> { MessageRepositoryImpl(get()) }
+
+    single<RemoteSubscriptionDataSource> { get<Retrofit>().create() }
+    single<SubscriptionRepository> { SubscriptionRepositoryImpl(get()) }
+
     viewModel { FeedFragmentViewModel(get()) }
     viewModel { LoginViewModel(get()) }
     viewModel<MessageListViewModel> { MessageListViewModelImpl(get()) }
     viewModel { UserListViewModel(get()) }
-    viewModel { UserFragmentViewModel(get()) }
+    viewModel { UserFragmentViewModel(get(), get()) }
 }
 
 val testModule = module {

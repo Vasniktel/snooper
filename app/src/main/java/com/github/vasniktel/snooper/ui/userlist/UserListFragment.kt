@@ -2,23 +2,18 @@ package com.github.vasniktel.snooper.ui.userlist
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
-import androidx.lifecycle.Observer
+import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.observe
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.github.vasniktel.snooper.R
 import com.github.vasniktel.snooper.logic.model.User
-import com.github.vasniktel.snooper.ui.activity.MainActivity
-import com.github.vasniktel.snooper.ui.user.UserFragment
-import com.github.vasniktel.snooper.util.changeVisibility
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_user_list.*
-import kotlinx.android.synthetic.main.fragment_user_list.refreshLayout
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 private val TAG = UserListFragment::class.simpleName
@@ -68,8 +63,8 @@ class UserListFragment : Fragment(), UserListViewStateCallback {
     }
 
     override fun onDataLoaded(data: List<User>) {
-        changeVisibility(noUserText, data.isEmpty())
-        changeVisibility(userList, data.isNotEmpty())
+        noUserText.isVisible = data.isEmpty()
+        userList.isVisible = data.isNotEmpty()
         adapter.submitList(data)
         snackBar?.dismiss()
     }

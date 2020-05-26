@@ -5,22 +5,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.github.vasniktel.snooper.R
 import com.github.vasniktel.snooper.logic.model.Message
 import com.github.vasniktel.snooper.logic.model.latLng
-import com.github.vasniktel.snooper.util.changeVisibility
 import com.google.android.libraries.maps.CameraUpdateFactory
 import com.google.android.libraries.maps.GoogleMap
 import com.google.android.libraries.maps.OnMapReadyCallback
 import com.google.android.libraries.maps.model.MarkerOptions
-import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
 import kotlinx.android.synthetic.main.message_list_item.view.*
-import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -106,10 +104,12 @@ class MessageViewHolder(
         }*/
 
         if (data.description != null) {
-            changeVisibility(messageDescription, true)
-            messageDescription.text = data.description
+            messageDescription.apply {
+                isVisible = true
+                text = data.description
+            }
         } else {
-            changeVisibility(messageDescription, false)
+            messageDescription.isVisible = false
         }
 
         userPhoto.setOnClickListener { callback.onUserClicked(position, data) }

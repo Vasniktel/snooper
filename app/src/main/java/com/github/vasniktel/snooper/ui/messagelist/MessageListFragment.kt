@@ -8,11 +8,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import com.github.vasniktel.snooper.R
 import com.github.vasniktel.snooper.logic.model.Message
-import com.github.vasniktel.snooper.util.changeVisibility
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_message_list.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -78,8 +78,8 @@ class MessageListFragment : Fragment(), MessageListViewStateCallback, ListItemCa
     }
 
     override fun onNewDataLoaded(data: List<Message>) {
-        changeVisibility(noDataText, data.isEmpty())
-        changeVisibility(messageList, data.isNotEmpty())
+        noDataText.isVisible = data.isEmpty()
+        messageList.isVisible = data.isNotEmpty()
         adapter.submitList(data)
         snackBar?.dismiss()
     }

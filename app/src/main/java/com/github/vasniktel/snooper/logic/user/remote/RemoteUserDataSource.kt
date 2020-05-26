@@ -15,12 +15,6 @@ interface RemoteUserDataSource {
     @GET("users/get")
     suspend fun getUserById(@Query("id") id: String): RemoteUserDto
 
-    @GET("users/follow")
-    suspend fun follow(
-        @Query("followerId") followerId: String,
-        @Query("followeeId") followeeId: String
-    )
-
     @POST("users/add")
     suspend fun add(@Body user: RemoteUserDto)
 }

@@ -80,6 +80,19 @@
                     android:layout_marginEnd="16dp"
                     />
 
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/subscriptionButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/follow_button_text"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_marginEnd="16dp"
+                    android:textColor="#ffffff"
+                    />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </com.google.android.material.appbar.MaterialToolbar>
