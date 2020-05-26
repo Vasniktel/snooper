@@ -13,6 +13,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import java.util.*
 import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 interface LocationProvider {
     suspend fun getLocation(): Location
@@ -51,7 +52,7 @@ class LocationProviderImpl(
                 try {
                     provider.requestLocationUpdates(request, callback, null)
                 } catch (e: Exception) {
-                    cont.cancel(e)
+                    cont.resumeWithException(e)
                 }
             }
         }
