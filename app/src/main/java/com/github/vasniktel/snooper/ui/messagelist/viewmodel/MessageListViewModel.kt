@@ -55,12 +55,11 @@ abstract class MessageListViewModel(
     }
 
     override fun onLikeClickedEvent(message: Message) {
-        viewModelScope.launch(Dispatchers.IO) {
-            messageRepository.addLike(message)
-            withContext(Dispatchers.Main) {
-                _viewState.value =
-                    PopulateState(true)
-            }
-        }
+        viewModelScope.doWork(
+            mainContext = Dispatchers.Main,
+            workContext = Dispatchers.IO,
+            worker = { messageRepository.addLike(message) },
+            post = { _viewState.value = PopulateState(true) }
+        )
     }
 }

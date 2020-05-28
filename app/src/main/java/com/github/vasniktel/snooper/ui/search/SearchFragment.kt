@@ -39,10 +39,9 @@ class SearchFragment : Fragment() {
         searchEditBox.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 provider.produce(searchEditBox.text.toString())
-                true
-            } else {
-                false
             }
+
+            false
         }
     }
 }
