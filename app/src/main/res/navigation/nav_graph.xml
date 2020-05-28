@@ -46,6 +46,12 @@
             app:launchSingleTop="true"
             app:popUpTo="@id/nav_graph"
             app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_userFragment_self"
+            app:destination="@id/userFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:launchSingleTop="false" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -84,6 +90,14 @@
             app:enterAnim="@android:anim/fade_in"
             app:exitAnim="@android:anim/fade_out"
             app:launchSingleTop="false" />
+        <action
+            android:id="@+id/action_myProfileFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="false" />
     </fragment>
 
 </navigation>

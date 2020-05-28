@@ -61,8 +61,6 @@ class MessageListFragment : Fragment(), MessageListViewStateCallback, ListItemCa
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        Log.d(TAG, "onActvityCreated: ${::adapter.isInitialized}")
-
         adapter = MessageListAdapter(this).apply {
             registerAdapterDataObserver(dataObserver)
         }
@@ -104,8 +102,8 @@ class MessageListFragment : Fragment(), MessageListViewStateCallback, ListItemCa
         ).show()
     }
 
-    override fun onPopulateState() {
-        viewModel.onEvent(RefreshEvent(user, false))
+    override fun onPopulateState(fetch: Boolean) {
+        viewModel.onEvent(RefreshEvent(user, fetch))
     }
 
     override fun onUserClicked(position: Int, message: Message) {

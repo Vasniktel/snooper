@@ -18,7 +18,7 @@ abstract class MessageListViewModel(
 ) : MviViewModel<MessageListViewEvent, MessageListViewState>,
     MessageListViewEventCallback, ViewModel() {
     protected val _viewState = MutableLiveData<MessageListViewState>(
-        PopulateState
+        PopulateState(false)
     )
     override val viewState: LiveData<MessageListViewState> = _viewState
 
@@ -59,7 +59,7 @@ abstract class MessageListViewModel(
             messageRepository.addLike(message)
             withContext(Dispatchers.Main) {
                 _viewState.value =
-                    PopulateState
+                    PopulateState(true)
             }
         }
     }

@@ -14,9 +14,9 @@ object MessageListSearchNavigator : MessageListNavigator {
     override fun toUserDirection(user: User): NavDirections {
         return SearchFragmentDirections.actionSearchFragmentToUserFragment(
             user,
-            this,
-            UserListSearchNavigator,
-            UserSearchNavigator
+            MessageListUserNavigator,
+            UserListUserNavigator,
+            UserUserNavigator
         )
     }
 }
@@ -26,16 +26,9 @@ object UserListSearchNavigator : UserListNavigator {
     override fun toUserDirection(user: User): NavDirections {
         return SearchFragmentDirections.actionSearchFragmentToUserFragment(
             user,
-            MessageListSearchNavigator,
-            this,
-            UserSearchNavigator
+            MessageListUserNavigator,
+            UserListUserNavigator,
+            UserUserNavigator
         )
-    }
-}
-
-@Parcelize
-object UserSearchNavigator : UserNavigator {
-    override fun toLoginDirection(): NavDirections {
-        return UserFragmentDirections.actionUserFragmentToLoginFragment()
     }
 }

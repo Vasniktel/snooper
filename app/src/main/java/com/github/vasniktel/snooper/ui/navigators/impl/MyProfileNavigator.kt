@@ -14,9 +14,9 @@ object MessageListMyProfileNavigator : MessageListNavigator {
     override fun toUserDirection(user: User): NavDirections {
         return MyProfileFragmentDirections.actionMyProfileFragmentToUserFragment(
             user,
-            this,
-            UserListMyProfileNavigator,
-            UserMyProfileNavigator
+            MessageListUserNavigator,
+            UserListUserNavigator,
+            UserUserNavigator
         )
     }
 }
@@ -26,9 +26,9 @@ object UserListMyProfileNavigator : UserListNavigator {
     override fun toUserDirection(user: User): NavDirections {
         return MyProfileFragmentDirections.actionMyProfileFragmentToUserFragment(
             user,
-            MessageListMyProfileNavigator,
-            this,
-            UserMyProfileNavigator
+            MessageListUserNavigator,
+            UserListUserNavigator,
+            UserUserNavigator
         )
     }
 }
@@ -36,6 +36,6 @@ object UserListMyProfileNavigator : UserListNavigator {
 @Parcelize
 object UserMyProfileNavigator : UserNavigator {
     override fun toLoginDirection(): NavDirections {
-        return UserFragmentDirections.actionUserFragmentToLoginFragment()
+        return MyProfileFragmentDirections.actionMyProfileFragmentToLoginFragment()
     }
 }

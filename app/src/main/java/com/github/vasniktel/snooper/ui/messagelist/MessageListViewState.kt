@@ -7,7 +7,7 @@ interface MessageListViewStateCallback {
     fun onLoadingState()
     fun onDataState(data: List<Message>)
     fun onError(message: String, throwable: Throwable?)
-    fun onPopulateState()
+    fun onPopulateState(fetch: Boolean)
 }
 
 typealias MessageListViewState = ViewState<MessageListViewStateCallback>
@@ -35,8 +35,10 @@ data class ErrorState(
     }
 }
 
-object PopulateState : MessageListViewState {
+data class PopulateState(
+    private val fetch: Boolean
+) : MessageListViewState {
     override fun applyCallback(callback: MessageListViewStateCallback) {
-        callback.onPopulateState()
+        callback.onPopulateState(fetch)
     }
 }

@@ -36,7 +36,7 @@ class SearchFragment : Fragment() {
             tab.text = TAB_NAME[position]
         }.attach()
 
-        searchEditBox.setOnEditorActionListener { _, actionId, event ->
+        searchEditBox.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 provider.produce(searchEditBox.text.toString())
                 true
