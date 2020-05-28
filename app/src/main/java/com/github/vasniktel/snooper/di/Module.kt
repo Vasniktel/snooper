@@ -21,7 +21,6 @@ import com.github.vasniktel.snooper.ui.messagelist.viewmodel.MessageFeedViewMode
 import com.github.vasniktel.snooper.ui.messagelist.viewmodel.MessageListViewModel
 import com.github.vasniktel.snooper.ui.messagelist.viewmodel.MessagePostsViewModel
 import com.github.vasniktel.snooper.ui.messagelist.viewmodel.MessageSearchViewModel
-import com.github.vasniktel.snooper.ui.search.SearchViewModel
 import com.github.vasniktel.snooper.ui.user.UserFragmentViewModel
 import com.github.vasniktel.snooper.ui.userlist.UserListType
 import com.github.vasniktel.snooper.ui.userlist.viewmodel.UserFolloweesViewModel
@@ -77,6 +76,7 @@ val productionModule = module {
 
     viewModel { FeedFragmentViewModel(get()) }
     viewModel { LoginViewModel(get()) }
+    viewModel { UserFragmentViewModel(get(), get(), get(), get()) }
     viewModel<MessageListViewModel>(named(MessageListType.FEED)) {
         MessageFeedViewModel(get())
     }
@@ -95,10 +95,4 @@ val productionModule = module {
     viewModel<UserListViewModel>(named(UserListType.SEARCH)) {
         UserSearchViewModel(get(), get())
     }
-    viewModel { UserFragmentViewModel(get(), get(), get(), get()) }
-    viewModel { SearchViewModel(get()) }
-}
-
-val testModule = module {
-
 }
