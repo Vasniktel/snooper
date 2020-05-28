@@ -37,7 +37,6 @@ class SearchFragment : Fragment() {
         }.attach()
 
         searchEditBox.setOnEditorActionListener { _, actionId, event ->
-            Log.d("aaa", "actionId: $actionId, event: $event")
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 provider.produce(searchEditBox.text.toString())
                 true
