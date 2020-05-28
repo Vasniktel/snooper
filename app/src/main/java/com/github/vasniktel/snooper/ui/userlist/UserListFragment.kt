@@ -52,7 +52,7 @@ class UserListFragment : Fragment(), UserListViewStateCallback {
         userList.adapter = adapter
 
         refreshLayout.setOnRefreshListener {
-            viewModel.onEvent(RefreshEvent(user))
+            viewModel.onEvent(RefreshEvent(user, fetch = true))
         }
 
         viewModel.viewState.observe(viewLifecycleOwner) {
@@ -82,7 +82,7 @@ class UserListFragment : Fragment(), UserListViewStateCallback {
     }
 
     override fun onPopulateState() {
-        viewModel.onEvent(RefreshEvent(user))
+        viewModel.onEvent(RefreshEvent(user, fetch = false))
     }
 
     companion object {

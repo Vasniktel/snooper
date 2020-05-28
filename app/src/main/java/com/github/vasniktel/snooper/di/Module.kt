@@ -1,5 +1,7 @@
 package com.github.vasniktel.snooper.di
 
+import androidx.room.Room
+import com.github.vasniktel.snooper.logic.Db
 import com.github.vasniktel.snooper.logic.location.LocationProvider
 import com.github.vasniktel.snooper.logic.location.LocationProviderImpl
 import com.github.vasniktel.snooper.logic.message.MessageRepository
@@ -59,11 +61,26 @@ val productionModule = module {
             .build()
     }
 
-    single<RemoteUserDataSource> { get<Retrofit>().create() }
-    single<UserRepository> { UserRepositoryImpl(get())}
+    single {
+        Room
+            .databaseBuilder(
+                androidApplication(),
+                Db::class.java,
+                "snooper_db"
+            )
+            .fallbackToDestructiveMigration()
+            .build()
+    }
+    single { get<Db>().getFollowersDao() }
+    single { get<Db>().getFolloweesDao() }
+    single { get<Db>().getFeedDao() }
+    single { get<Db>().getPostsDao() }
+
+    single { get<Retrofit>().create<RemoteUserDataSource>() }
+    single<UserRepository> { UserRepositoryImpl(get(), get(), get())}
 
     single<RemoteMessageDataSource> { get<Retrofit>().create() }
-    single<MessageRepository> { MessageRepositoryImpl(get()) }
+    single<MessageRepository> { MessageRepositoryImpl(get(), get(), get()) }
 
     single<RemoteSubscriptionDataSource> { get<Retrofit>().create() }
     single<SubscriptionRepository> { SubscriptionRepositoryImpl(get()) }

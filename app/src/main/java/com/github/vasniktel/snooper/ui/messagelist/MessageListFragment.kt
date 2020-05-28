@@ -74,7 +74,7 @@ class MessageListFragment : Fragment(), MessageListViewStateCallback, ListItemCa
         }
 
         refreshLayout.setOnRefreshListener {
-            viewModel.onEvent(RefreshEvent(user))
+            viewModel.onEvent(RefreshEvent(user, true))
         }
 
         viewModel.viewState.observe(viewLifecycleOwner) {
@@ -105,7 +105,7 @@ class MessageListFragment : Fragment(), MessageListViewStateCallback, ListItemCa
     }
 
     override fun onPopulateState() {
-        viewModel.onEvent(RefreshEvent(user))
+        viewModel.onEvent(RefreshEvent(user, false))
     }
 
     override fun onUserClicked(position: Int, message: Message) {

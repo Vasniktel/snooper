@@ -5,17 +5,18 @@ import com.github.vasniktel.snooper.logic.model.User
 import com.github.vasniktel.snooper.util.mvi.ViewEvent
 
 interface MessageListViewEventCallback {
-    fun onRefreshEvent(user: User?)
+    fun onRefreshEvent(user: User?, fetch: Boolean)
     fun onLikeClickedEvent(message: Message)
 }
 
 typealias MessageListViewEvent = ViewEvent<MessageListViewEventCallback>
 
 data class RefreshEvent(
-    private val user: User?
+    private val user: User?,
+    private val fetch: Boolean
 ) : MessageListViewEvent {
     override fun applyCallback(callback: MessageListViewEventCallback) {
-        callback.onRefreshEvent(user)
+        callback.onRefreshEvent(user, fetch)
     }
 }
 

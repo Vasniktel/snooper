@@ -6,9 +6,9 @@ import com.github.vasniktel.snooper.logic.model.User
 class MessagePostsViewModel(
     messageRepository: MessageRepository
 ) : MessageListViewModel(messageRepository) {
-    override fun onRefreshEvent(user: User?) {
+    override fun onRefreshEvent(user: User?, fetch: Boolean) {
         loadData {
-            messageRepository.getUserOwnMessages(user!!.id, fetch = true)
+            messageRepository.getUserOwnMessages(user!!.id, fetch)
         }
     }
 }

@@ -6,9 +6,9 @@ import com.github.vasniktel.snooper.logic.user.UserRepository
 class UserFollowersViewModel(
     private val userRepository: UserRepository
 ) : UserListViewModel() {
-    override fun onRefreshEvent(user: User?) {
+    override fun onRefreshEvent(user: User?, fetch: Boolean) {
         loadData {
-            userRepository.getFollowersOf(user!!.id, fetch = true)
+            userRepository.getFollowersOf(user!!.id, fetch)
         }
     }
 }

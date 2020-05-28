@@ -38,7 +38,7 @@ class UserSearchViewModel(
             .launchIn(viewModelScope)
     }
 
-    override fun onRefreshEvent(user: User?) {
+    override fun onRefreshEvent(user: User?, fetch: Boolean) {
         val query = searchQuery.value
 
         if (query == null) {
