@@ -44,7 +44,7 @@ class LoginFragment : Fragment(), LoginViewStateCallback {
 
         if (requestCode != AUTH_REQUEST) return
 
-        viewModel.handleAuthorizationResult(IdpResponse.fromResultIntent(data))
+        viewModel.onEvent(AuthorizationComplete(IdpResponse.fromResultIntent(data)))
     }
 
     override fun onNotAuthorized() {

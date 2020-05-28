@@ -1,12 +1,7 @@
 package com.github.vasniktel.snooper.backend.messages;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.vasniktel.snooper.backend.users.UserDto;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.Formula;
-import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
@@ -119,5 +114,20 @@ public class MessageDto {
 
   public void setOwner(@NonNull UserDto owner) {
     this.owner = owner;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    MessageDto that = (MessageDto) o;
+
+    return id == that.id;
+  }
+
+  @Override
+  public int hashCode() {
+    return id;
   }
 }

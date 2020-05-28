@@ -27,6 +27,8 @@ interface UserRepository {
 
     suspend fun create(user: User)
     suspend fun getUserById(id: String): User
+
+    suspend fun search(query: String): List<User>
 }
 
 @ExperimentalCoroutinesApi
@@ -89,5 +91,9 @@ class UserRepositoryImpl(
 
     override suspend fun getUserById(id: String): User {
         return remote.getUserById(id).toModel()
+    }
+
+    override suspend fun search(query: String): List<User> {
+        return remote.search(query).map { it.toModel() }
     }
 }

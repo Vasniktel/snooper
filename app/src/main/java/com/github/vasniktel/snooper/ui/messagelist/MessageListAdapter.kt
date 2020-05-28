@@ -32,14 +32,12 @@ private object MessageDiffCallback : DiffUtil.ItemCallback<Message>() {
 
 interface ListItemCallback {
     fun onUserClicked(position: Int, message: Message)
-    fun onMessageMenuButtonClicked(position: Int, message: Message)
     fun onMessageLikeButtonClicked(position: Int, message: Message)
     fun onMessageShareButtonClicked(position: Int, message: Message)
 }
 
 class MessageListAdapter(
     private val callback: ListItemCallback
-    //private val currentUserProvider: () -> User
 ) : ListAdapter<Message, MessageViewHolder>(
     MessageDiffCallback
 ) {
@@ -93,15 +91,9 @@ class MessageViewHolder(
             likeCount.setTextColor(color)
             messageLikeButton.setColorFilter(color, PorterDuff.Mode.MULTIPLY)
         } else {
-            likeCount.setTextColor(likeCount.textColors.defaultColor)
+            likeCount.setTextColor(messageDate.textColors)
             messageLikeButton.clearColorFilter()
         }
-
-        /*if (currentUser is User.LoggedIn && currentUser.id == data.ownerId) {
-            messageMenuButton!!.visibility = View.VISIBLE
-        } else {
-            messageMenuButton!!.visibility = View.GONE
-        }*/
 
         if (data.description != null) {
             messageDescription.apply {
@@ -114,7 +106,6 @@ class MessageViewHolder(
 
         userPhoto.setOnClickListener { callback.onUserClicked(position, data) }
         userName.setOnClickListener { callback.onUserClicked(position, data) }
-        messageMenuButton.setOnClickListener { callback.onMessageMenuButtonClicked(position, data) }
         messageLikeButton.setOnClickListener { callback.onMessageLikeButtonClicked(position, data) }
         messageShareButton.setOnClickListener { callback.onMessageShareButtonClicked(position, data) }
 
@@ -138,6 +129,7 @@ class MessageViewHolder(
     }
 
     fun clear() {
+        if (!::map.isInitialized) return
         map.apply {
             clear()
             mapType = GoogleMap.MAP_TYPE_NONE

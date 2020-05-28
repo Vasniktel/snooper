@@ -17,4 +17,7 @@ interface RemoteUserDataSource {
 
     @POST("users/add")
     suspend fun add(@Body user: RemoteUserDto)
+
+    @GET("users/search")
+    suspend fun search(@Query("query") query: String): List<RemoteUserDto>
 }

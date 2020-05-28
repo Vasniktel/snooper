@@ -20,6 +20,7 @@ interface MessageRepository {
     suspend fun updateMessage(message: Message)
     suspend fun createMessage(message: Message)
     suspend fun addLike(message: Message)
+    suspend fun search(query: String): List<Message>
 }
 
 @FlowPreview
@@ -57,7 +58,6 @@ class MessageRepositoryImpl(
         .build()
 
     override suspend fun getFeedForUser(userId: String, fetch: Boolean): List<Message> {
-        delay(3000)
         return if (fetch) feedStore.fresh(userId) else feedStore.get(userId)
     }
 
@@ -70,7 +70,16 @@ class MessageRepositoryImpl(
     }
 
     override suspend fun addLike(message: Message) {
-        remoteMessageDataSource.updateMessage(message.toRemoteDto().copy(date = message.date))
+        remoteMessageDataSource.updateMessage(
+            message.toRemoteDto().copy(
+                date = message.date,
+                likes = message.likes + 1
+            )
+        )
+    }
+
+    override suspend fun search(query: String): List<Message> {
+        return remoteMessageDataSource.search(query).map { it.toModel() }
     }
 
     override suspend fun createMessage(message: Message) {

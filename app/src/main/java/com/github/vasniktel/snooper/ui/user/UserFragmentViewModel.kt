@@ -13,6 +13,7 @@ import com.github.vasniktel.snooper.logic.subscription.SubscriptionRepository
 import com.github.vasniktel.snooper.logic.user.UserRepository
 import com.github.vasniktel.snooper.util.SnooperException
 import com.github.vasniktel.snooper.util.doWork
+import com.github.vasniktel.snooper.util.mvi.MviViewModel
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.Dispatchers
@@ -22,14 +23,15 @@ class UserFragmentViewModel(
     private val subscriptionRepository: SubscriptionRepository,
     private val locationProvider: LocationProvider,
     private val messageRepository: MessageRepository
-) : ViewModel() {
+) : ViewModel(), MviViewModel<UserViewEvent, UserViewState>, UserViewEventCallback {
     val currentUser get() = userRepository.currentUser!!
-    fun logOut() = Firebase.auth.signOut()
 
     private val _viewState = MutableLiveData<UserViewState>(PopulateState)
-    val viewState: LiveData<UserViewState> = _viewState
+    override val viewState: LiveData<UserViewState> = _viewState
 
-    fun changeSubscription(user: User, isFollowee: Boolean) {
+    override fun onLogOutEvent() = Firebase.auth.signOut()
+
+    override fun onChangeSubscriptionEvent(user: User, isFollowee: Boolean) {
         if (user == currentUser) {
             throw SnooperException("Can't subscribe to myself")
         }
@@ -45,12 +47,12 @@ class UserFragmentViewModel(
                 }
             },
             post = {
-                _viewState.value = SubscriptionUpdate(!isFollowee)
+                _viewState.value = SubscriptionUpdateState(!isFollowee)
             }
         )
     }
 
-    fun updateSubscriptionStatus(user: User) {
+    override fun onUpdateSubscriptionEvent(user: User) {
         if (user == currentUser) {
             throw SnooperException("Attempt to fetch subscription status of myself")
         }
@@ -60,7 +62,7 @@ class UserFragmentViewModel(
             workContext = Dispatchers.IO,
             worker = { subscriptionRepository.isFollowee(currentUser.id, user.id) },
             post = {
-                _viewState.value = SubscriptionUpdate(it)
+                _viewState.value = SubscriptionUpdateState(it)
             }
         )
     }
@@ -69,7 +71,7 @@ class UserFragmentViewModel(
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.ACCESS_FINE_LOCATION"
     ])
-    fun postMessage() {
+    override fun onPostMessageEvent() {
         viewModelScope.doWork(
             mainContext = Dispatchers.Main,
             workContext = Dispatchers.IO,
@@ -85,5 +87,9 @@ class UserFragmentViewModel(
                     ErrorState("Failed to post a message", it)
             }
         )
+    }
+
+    override fun onEvent(event: UserViewEvent) {
+        event.applyCallback(this)
     }
 }

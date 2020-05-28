@@ -16,7 +16,6 @@ import com.github.vasniktel.snooper.R
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import com.livinglifetechway.quickpermissions_kotlin.runWithPermissions
-import com.livinglifetechway.quickpermissions_kotlin.util.QuickPermissionsOptions
 import com.squareup.picasso.Picasso
 import jp.wasabeef.picasso.transformations.CropCircleTransformation
 import kotlinx.android.synthetic.main.fragment_user.*
@@ -42,8 +41,8 @@ class UserFragment : Fragment(), UserViewStateCallback {
 
         val user = args.user ?: viewModel.currentUser
 
-        viewPager.adapter = UserFragmentTabsAdapter(user.id, this)
-        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+        userViewPager.adapter = UserFragmentTabsAdapter(user, this)
+        TabLayoutMediator(userTabLayout, userViewPager) { tab, position ->
             tab.text = TAB_NAME[position]
         }.attach()
 
@@ -52,7 +51,7 @@ class UserFragment : Fragment(), UserViewStateCallback {
         }
 
         logoutButton.setOnClickListener {
-            viewModel.logOut()
+            viewModel.onEvent(LogOutEvent)
             findNavController().navigate(
                 UserFragmentDirections.actionUserFragmentToLoginFragment()
             )
@@ -60,7 +59,7 @@ class UserFragment : Fragment(), UserViewStateCallback {
 
         postMessageButton.setOnClickListener {
             runWithPermissions(ACCESS_FINE_LOCATION) {
-                viewModel.postMessage()
+                viewModel.onEvent(PostMessageEvent)
             }
         }
 
@@ -83,7 +82,7 @@ class UserFragment : Fragment(), UserViewStateCallback {
             .into(userPhoto)
     }
 
-    override fun onSubscriptionUpdate(isFollowee: Boolean) {
+    override fun onSubscriptionUpdateState(isFollowee: Boolean) {
         subscriptionButton.apply {
             isVisible = true
             text = getString(
@@ -94,7 +93,7 @@ class UserFragment : Fragment(), UserViewStateCallback {
                 }
             )
             setOnClickListener {
-                viewModel.changeSubscription(args.user!!, isFollowee)
+                viewModel.onEvent(ChangeSubscriptionsEvent(args.user!!, isFollowee))
             }
         }
     }
@@ -102,7 +101,7 @@ class UserFragment : Fragment(), UserViewStateCallback {
     override fun onPopulateState() {
         args.user?.let {
             if (it != viewModel.currentUser) {
-                viewModel.updateSubscriptionStatus(it)
+                viewModel.onEvent(UpdateSubscriptionEvent(it))
             }
         }
     }

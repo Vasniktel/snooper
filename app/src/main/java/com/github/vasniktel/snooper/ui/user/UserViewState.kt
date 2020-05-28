@@ -1,10 +1,9 @@
 package com.github.vasniktel.snooper.ui.user
 
-import com.github.vasniktel.snooper.logic.model.User
-import com.github.vasniktel.snooper.util.ViewState
+import com.github.vasniktel.snooper.util.mvi.ViewState
 
 interface UserViewStateCallback {
-    fun onSubscriptionUpdate(isFollowee: Boolean)
+    fun onSubscriptionUpdateState(isFollowee: Boolean)
     fun onPopulateState()
     fun onError(message: String, throwable: Throwable?)
 }
@@ -17,11 +16,11 @@ object PopulateState : UserViewState {
     }
 }
 
-data class SubscriptionUpdate(
+data class SubscriptionUpdateState(
     val isFollowee: Boolean
 ) : UserViewState {
     override fun applyCallback(callback: UserViewStateCallback) {
-        callback.onSubscriptionUpdate(isFollowee)
+        callback.onSubscriptionUpdateState(isFollowee)
     }
 }
 

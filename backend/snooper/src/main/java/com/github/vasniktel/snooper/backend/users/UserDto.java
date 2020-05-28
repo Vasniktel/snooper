@@ -46,4 +46,19 @@ public class UserDto {
   public void setPhotoUrl(String photoUrl) {
     this.photoUrl = photoUrl;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    UserDto userDto = (UserDto) o;
+
+    return id.equals(userDto.id);
+  }
+
+  @Override
+  public int hashCode() {
+    return id.hashCode();
+  }
 }

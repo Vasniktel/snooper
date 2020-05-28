@@ -3,6 +3,8 @@ package com.github.vasniktel.snooper.backend.messages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -36,5 +38,12 @@ public class MessageController {
   public void updateMessage(@RequestBody MessageDto message) {
     if (message.getDate() == null) message.setDate(new Date());
     repository.save(message);
+  }
+
+  @GetMapping("/search")
+  public List<MessageDto> search(
+      @RequestParam("query") String query
+  ) {
+    return repository.search(Arrays.asList(query.split(" ")));
   }
 }

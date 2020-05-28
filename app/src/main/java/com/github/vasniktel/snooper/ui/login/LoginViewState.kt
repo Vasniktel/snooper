@@ -1,6 +1,6 @@
 package com.github.vasniktel.snooper.ui.login
 
-import com.github.vasniktel.snooper.util.ViewState
+import com.github.vasniktel.snooper.util.mvi.ViewState
 
 interface LoginViewStateCallback {
     fun onNotAuthorized()

@@ -11,26 +11,34 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.github.vasniktel.snooper.R
 import com.github.vasniktel.snooper.logic.model.Message
+import com.github.vasniktel.snooper.logic.model.User
+import com.github.vasniktel.snooper.ui.messagelist.viewmodel.MessageListViewModel
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_message_list.*
+import org.koin.android.ext.android.get
+import org.koin.androidx.viewmodel.ext.android.getViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.qualifier.named
 
 private val TAG = MessageListFragment::class.simpleName
 
 class MessageListFragment : Fragment(), MessageListViewStateCallback, ListItemCallback {
     private lateinit var navigator: MessageListNavigator
-    private lateinit var strategy: MessageRequestStrategy
-    private val viewModel: MessageListViewModel by viewModel()
+    private var user: User? = null
+
+    private lateinit var viewModel: MessageListViewModel
     private lateinit var adapter: MessageListAdapter
-    private var snackBar: Snackbar? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requireArguments().let {
-            strategy = it[STRATEGY_KEY] as MessageRequestStrategy
+            user = it[USER_KEY] as User?
             navigator = it[NAVIGATOR_KEY] as MessageListNavigator
+            viewModel = getViewModel(named(it[TYPE_KEY] as MessageListType))
         }
     }
 
@@ -45,7 +53,18 @@ class MessageListFragment : Fragment(), MessageListViewStateCallback, ListItemCa
         super.onActivityCreated(savedInstanceState)
         Log.d(TAG, "onActvityCreated: ${::adapter.isInitialized}")
 
-        adapter = MessageListAdapter(this)
+        adapter = MessageListAdapter(this).apply {
+            registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+                override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                    (messageList.layoutManager as LinearLayoutManager).run {
+                        // Scroll to top if new data is inserted.
+                        if (findFirstCompletelyVisibleItemPosition() == 0) {
+                            scrollToPositionWithOffset(0, 0)
+                        }
+                    }
+                }
+            })
+        }
         messageList.apply {
             adapter = this@MessageListFragment.adapter
             setRecyclerListener { holder ->
@@ -54,7 +73,7 @@ class MessageListFragment : Fragment(), MessageListViewStateCallback, ListItemCa
         }
 
         refreshLayout.setOnRefreshListener {
-            viewModel.fetchNewData(strategy)
+            viewModel.onEvent(RefreshEvent(user))
         }
 
         viewModel.viewState.observe(viewLifecycleOwner) {
@@ -63,78 +82,66 @@ class MessageListFragment : Fragment(), MessageListViewStateCallback, ListItemCa
         }
     }
 
-    override fun onLoadingTopVisibilityChange(visible: Boolean) {
-        refreshLayout.isRefreshing = visible
+    override fun onLoadingState() {
+        refreshLayout.isRefreshing = true
     }
 
-    override fun onLoadingBottomVisibilityChange(visible: Boolean) {
-        TODO("Not yet implemented")
-    }
-
-    override fun onNextPageLoaded(page: List<Message>) {
-        val data = adapter.currentList.toMutableList()
-        data += page
-        adapter.submitList(data)
-    }
-
-    override fun onNewDataLoaded(data: List<Message>) {
+    override fun onDataState(data: List<Message>) {
         noDataText.isVisible = data.isEmpty()
         messageList.isVisible = data.isNotEmpty()
+        refreshLayout.isRefreshing = false
+
         adapter.submitList(data)
-        snackBar?.dismiss()
     }
 
     override fun onError(message: String, throwable: Throwable?) {
         Log.e(TAG, "An error occurred: '$message'", throwable)
-        snackBar = Snackbar.make(requireView(), message, Snackbar.LENGTH_INDEFINITE)
-        snackBar?.show()
+        Snackbar.make(
+            requireParentFragment().requireView(),
+            message,
+            Snackbar.LENGTH_LONG
+        ).show()
     }
 
     override fun onPopulateState() {
-        viewModel.getData(strategy)
+        viewModel.onEvent(RefreshEvent(user))
     }
 
     override fun onUserClicked(position: Int, message: Message) {
         findNavController().navigate(navigator.toUserDirection(message.owner))
     }
 
-    override fun onMessageMenuButtonClicked(position: Int, message: Message) {
-        TODO("Not yet implemented")
-    }
-
     override fun onMessageLikeButtonClicked(position: Int, message: Message) {
-        message.copy(likes = message.likes + 1).let {
-            viewModel.addLike(it)
-            val data = adapter.currentList.toMutableList()
-            data[position] = it
-            adapter.submitList(data)
-        }
+        viewModel.onEvent(LikeClickedEvent(message))
     }
 
     override fun onMessageShareButtonClicked(position: Int, message: Message) {
         val intent = Intent().apply {
             action = Intent.ACTION_SEND
+            type = "text/plain"
             putExtra(
                 Intent.EXTRA_TEXT,
                 "${message.owner.name} has visited ${message.location.address}"
             )
-            type = "text/plain"
         }
 
         startActivity(Intent.createChooser(intent, null))
     }
 
     companion object {
-        private const val STRATEGY_KEY = "messageRequestStrategy"
-        private const val NAVIGATOR_KEY = "messageListNavigator"
+        private const val TYPE_KEY = "messageViewModelKey"
+        private const val USER_KEY = "messageUserKey"
+        private const val NAVIGATOR_KEY = "messageListNavigatorKey"
 
         fun create(
-            strategy: MessageRequestStrategy,
-            navigator: MessageListNavigator
+            user: User?,
+            navigator: MessageListNavigator,
+            type: MessageListType
         ) = MessageListFragment().apply {
             arguments = bundleOf(
-                STRATEGY_KEY to strategy,
-                NAVIGATOR_KEY to navigator
+                USER_KEY to user,
+                NAVIGATOR_KEY to navigator,
+                TYPE_KEY to type
             )
         }
     }

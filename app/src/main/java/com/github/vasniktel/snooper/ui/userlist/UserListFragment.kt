@@ -12,24 +12,27 @@ import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import com.github.vasniktel.snooper.R
 import com.github.vasniktel.snooper.logic.model.User
+import com.github.vasniktel.snooper.ui.userlist.viewmodel.UserListViewModel
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_user_list.*
+import org.koin.androidx.viewmodel.ext.android.getViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.qualifier.named
 
 private val TAG = UserListFragment::class.simpleName
 
 class UserListFragment : Fragment(), UserListViewStateCallback {
     private lateinit var navigator: UserListNavigator
-    private lateinit var strategy: UserListRequestStrategy
     private lateinit var adapter: UserListAdapter
-    private var snackBar: Snackbar? = null
-    private val viewModel: UserListViewModel by viewModel()
+    private lateinit var viewModel: UserListViewModel
+    private var user: User? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requireArguments().let {
-            strategy = it[STRATEGY_KEY] as UserListRequestStrategy
+            user = it[USER_KEY] as User?
             navigator = it[NAVIGATOR_KEY] as UserListNavigator
+            viewModel = getViewModel(named(it[TYPE_KEY] as UserListType))
         }
     }
 
@@ -49,7 +52,7 @@ class UserListFragment : Fragment(), UserListViewStateCallback {
         userList.adapter = adapter
 
         refreshLayout.setOnRefreshListener {
-            viewModel.loadData(strategy)
+            viewModel.onEvent(RefreshEvent(user))
         }
 
         viewModel.viewState.observe(viewLifecycleOwner) {
@@ -58,38 +61,44 @@ class UserListFragment : Fragment(), UserListViewStateCallback {
         }
     }
 
-    override fun onLoadingVisibilityChange(visible: Boolean) {
-        refreshLayout.isRefreshing = visible
+    override fun onLoadingState() {
+        refreshLayout.isRefreshing = true
     }
 
-    override fun onDataLoaded(data: List<User>) {
+    override fun onDataState(data: List<User>) {
         noUserText.isVisible = data.isEmpty()
         userList.isVisible = data.isNotEmpty()
+        refreshLayout.isRefreshing = false
         adapter.submitList(data)
-        snackBar?.dismiss()
     }
 
-    override fun onError(message: String, throwable: Throwable?) {
+    override fun onErrorState(message: String, throwable: Throwable?) {
         Log.e(TAG, "An error occurred: '$message'", throwable)
-        snackBar = Snackbar.make(requireView(), message, Snackbar.LENGTH_INDEFINITE)
-        snackBar?.show()
+        Snackbar.make(
+            requireParentFragment().requireView(),
+            message,
+            Snackbar.LENGTH_LONG
+        ).show()
     }
 
     override fun onPopulateState() {
-        viewModel.loadData(strategy)
+        viewModel.onEvent(RefreshEvent(user))
     }
 
     companion object {
-        private const val STRATEGY_KEY = "userListRequestStrategy"
-        private const val NAVIGATOR_KEY = "userListNavigator"
+        private const val USER_KEY = "userListUserKey"
+        private const val TYPE_KEY = "userListTypeKey"
+        private const val NAVIGATOR_KEY = "userListNavigatorKey"
 
         fun create(
-            strategy: UserListRequestStrategy,
-            navigator: UserListNavigator
+            user: User?,
+            navigator: UserListNavigator,
+            type: UserListType
         ) = UserListFragment().apply {
             arguments = bundleOf(
-                STRATEGY_KEY to strategy,
-                NAVIGATOR_KEY to navigator
+                USER_KEY to user,
+                NAVIGATOR_KEY to navigator,
+                TYPE_KEY to type
             )
         }
     }

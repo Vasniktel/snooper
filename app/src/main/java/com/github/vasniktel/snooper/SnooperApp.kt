@@ -2,6 +2,7 @@ package com.github.vasniktel.snooper
 
 import android.app.Application
 import com.github.vasniktel.snooper.di.productionModule
+import com.google.android.libraries.maps.MapsInitializer
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import org.koin.android.ext.koin.androidContext
@@ -18,5 +19,7 @@ class SnooperApp : Application() {
             androidContext(this@SnooperApp)
             modules(productionModule)
         }
+
+        MapsInitializer.initialize(this)
     }
 }

@@ -17,4 +17,7 @@ interface RemoteMessageDataSource {
 
     @POST("messages/update")
     suspend fun updateMessage(@Body messageDto: RemoteMessageDto)
+
+    @GET("messages/search")
+    suspend fun search(@Query("query") query: String): List<RemoteMessageDto>
 }

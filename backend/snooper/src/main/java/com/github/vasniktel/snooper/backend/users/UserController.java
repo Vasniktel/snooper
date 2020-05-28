@@ -3,6 +3,7 @@ package com.github.vasniktel.snooper.backend.users;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -33,5 +34,10 @@ public class UserController {
   @GetMapping("/followees")
   List<UserDto> getFolloweesOf(@RequestParam("id") String id) {
     return repository.getFolloweesOf(id);
+  }
+
+  @GetMapping("/search")
+  List<UserDto> search(@RequestParam("query") String query) {
+    return repository.search(Arrays.asList(query.split(" ")));
   }
 }

@@ -5,9 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
 import com.github.vasniktel.snooper.R
-import com.github.vasniktel.snooper.ui.messagelist.FeedRequestStrategy
 import com.github.vasniktel.snooper.ui.messagelist.MessageListFragment
+import com.github.vasniktel.snooper.ui.messagelist.MessageListType
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FeedFragment : Fragment() {
@@ -25,15 +26,16 @@ class FeedFragment : Fragment() {
 
         childFragmentManager.apply {
             if (findFragmentById(R.id.messageListFragment) == null) {
-                beginTransaction()
-                    .add(
+                commit {
+                    add(
                         R.id.messageListFragment,
                         MessageListFragment.create(
-                            FeedRequestStrategy(viewModel.currentUser.id),
-                            MessageListNavigatorImpl
+                            viewModel.currentUser,
+                            MessageListNavigatorImpl,
+                            MessageListType.FEED
                         )
                     )
-                    .commit()
+                }
             }
         }
     }

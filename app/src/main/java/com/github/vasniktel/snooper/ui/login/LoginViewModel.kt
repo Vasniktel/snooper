@@ -10,6 +10,7 @@ import com.github.vasniktel.snooper.logic.model.User
 import com.github.vasniktel.snooper.logic.model.toUser
 import com.github.vasniktel.snooper.logic.user.UserRepository
 import com.github.vasniktel.snooper.util.doWork
+import com.github.vasniktel.snooper.util.mvi.MviViewModel
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.Dispatchers
@@ -19,9 +20,9 @@ private val TAG = LoginViewModel::class.simpleName
 
 class LoginViewModel(
     private val userRepository: UserRepository
-) : ViewModel() {
+) : ViewModel(), MviViewModel<LoginViewEvent, LoginViewState>, LoginViewEventCallback {
     private val _viewState = MutableLiveData<LoginViewState>()
-    val viewState: LiveData<LoginViewState> = _viewState
+    override val viewState: LiveData<LoginViewState> = _viewState
 
     init {
         _viewState.value = if (userRepository.currentUser == null) {
@@ -31,16 +32,20 @@ class LoginViewModel(
         }
     }
 
-    fun handleAuthorizationResult(response: IdpResponse?) {
-        if (response == null || response.error != null) {
-            Log.w(TAG, "Login is unsuccessful: response: $response")
-            _viewState.value = AuthorizationError("Unable to authorize", response?.error)
+    override fun onEvent(event: LoginViewEvent) {
+        event.applyCallback(this)
+    }
+
+    override fun onAuthorizationComplete(result: IdpResponse?) {
+        if (result == null || result.error != null) {
+            Log.w(TAG, "Login is unsuccessful: response: $result")
+            _viewState.value = AuthorizationError("Unable to authorize", result?.error)
             return
         }
 
         _viewState.value = Authorized
 
-        if (response.isNewUser) {
+        if (result.isNewUser) {
             Log.d(TAG, "new user")
             viewModelScope.launch(Dispatchers.IO) {
                 userRepository.create(userRepository.currentUser!!)
