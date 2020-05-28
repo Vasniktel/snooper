@@ -13,6 +13,7 @@ import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.github.vasniktel.snooper.R
+import com.github.vasniktel.snooper.logic.model.User
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import com.livinglifetechway.quickpermissions_kotlin.runWithPermissions
@@ -41,7 +42,12 @@ class UserFragment : Fragment(), UserViewStateCallback {
 
         val user = args.user ?: viewModel.currentUser
 
-        userViewPager.adapter = UserFragmentTabsAdapter(user, this)
+        userViewPager.adapter = UserFragmentTabsAdapter(
+            user,
+            this,
+            args.messageListNavigator,
+            args.userListNavigator
+        )
         TabLayoutMediator(userTabLayout, userViewPager) { tab, position ->
             tab.text = TAB_NAME[position]
         }.attach()
@@ -52,9 +58,7 @@ class UserFragment : Fragment(), UserViewStateCallback {
 
         logoutButton.setOnClickListener {
             viewModel.onEvent(LogOutEvent)
-            findNavController().navigate(
-                UserFragmentDirections.actionUserFragmentToLoginFragment()
-            )
+            findNavController().navigate(args.userNavigator.toLoginDirection())
         }
 
         postMessageButton.setOnClickListener {
@@ -65,6 +69,7 @@ class UserFragment : Fragment(), UserViewStateCallback {
 
         backButton.isVisible = args.user != null
         logoutButton.isVisible = user == viewModel.currentUser
+        postMessageButton.isVisible = user == viewModel.currentUser
         subscriptionButton.isVisible = false
 
         viewModel.viewState.observe(viewLifecycleOwner) {
@@ -109,5 +114,12 @@ class UserFragment : Fragment(), UserViewStateCallback {
     override fun onError(message: String, throwable: Throwable?) {
         Log.w(TAG, "Got error: $message", throwable)
         Snackbar.make(requireView(), message, Snackbar.LENGTH_LONG).show()
+    }
+
+    companion object {
+        fun create(args: UserFragmentArgs) =
+            UserFragment().apply {
+                arguments = args.toBundle()
+            }
     }
 }

@@ -17,11 +17,10 @@ import com.github.vasniktel.snooper.R
 import com.github.vasniktel.snooper.logic.model.Message
 import com.github.vasniktel.snooper.logic.model.User
 import com.github.vasniktel.snooper.ui.messagelist.viewmodel.MessageListViewModel
+import com.github.vasniktel.snooper.ui.navigators.MessageListNavigator
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_message_list.*
-import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.ext.android.getViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.qualifier.named
 
 private val TAG = MessageListFragment::class.simpleName
@@ -32,6 +31,17 @@ class MessageListFragment : Fragment(), MessageListViewStateCallback, ListItemCa
 
     private lateinit var viewModel: MessageListViewModel
     private lateinit var adapter: MessageListAdapter
+
+    private val dataObserver = object : RecyclerView.AdapterDataObserver() {
+        override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+            (messageList.layoutManager as LinearLayoutManager).run {
+                // Scroll to top if new data is inserted.
+                if (findFirstVisibleItemPosition() == 0) {
+                    scrollToPositionWithOffset(0, 0)
+                }
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,16 +64,7 @@ class MessageListFragment : Fragment(), MessageListViewStateCallback, ListItemCa
         Log.d(TAG, "onActvityCreated: ${::adapter.isInitialized}")
 
         adapter = MessageListAdapter(this).apply {
-            registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
-                override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-                    (messageList.layoutManager as LinearLayoutManager).run {
-                        // Scroll to top if new data is inserted.
-                        if (findFirstCompletelyVisibleItemPosition() == 0) {
-                            scrollToPositionWithOffset(0, 0)
-                        }
-                    }
-                }
-            })
+            registerAdapterDataObserver(dataObserver)
         }
         messageList.apply {
             adapter = this@MessageListFragment.adapter

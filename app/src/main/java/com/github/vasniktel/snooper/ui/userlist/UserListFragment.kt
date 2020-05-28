@@ -12,11 +12,11 @@ import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
 import com.github.vasniktel.snooper.R
 import com.github.vasniktel.snooper.logic.model.User
+import com.github.vasniktel.snooper.ui.navigators.UserListNavigator
 import com.github.vasniktel.snooper.ui.userlist.viewmodel.UserListViewModel
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_user_list.*
 import org.koin.androidx.viewmodel.ext.android.getViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.qualifier.named
 
 private val TAG = UserListFragment::class.simpleName

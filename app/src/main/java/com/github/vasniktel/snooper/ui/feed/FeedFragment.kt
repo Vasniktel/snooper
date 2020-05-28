@@ -9,6 +9,7 @@ import androidx.fragment.app.commit
 import com.github.vasniktel.snooper.R
 import com.github.vasniktel.snooper.ui.messagelist.MessageListFragment
 import com.github.vasniktel.snooper.ui.messagelist.MessageListType
+import com.github.vasniktel.snooper.ui.navigators.impl.MessageListFeedNavigator
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FeedFragment : Fragment() {
@@ -24,14 +25,14 @@ class FeedFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        childFragmentManager.apply {
+        childFragmentManager.run {
             if (findFragmentById(R.id.messageListFragment) == null) {
                 commit {
                     add(
                         R.id.messageListFragment,
                         MessageListFragment.create(
                             viewModel.currentUser,
-                            MessageListNavigatorImpl,
+                            MessageListFeedNavigator,
                             MessageListType.FEED
                         )
                     )
